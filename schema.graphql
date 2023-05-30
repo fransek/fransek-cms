@@ -6,8 +6,6 @@ type User {
   name: String
   email: String
   password: PasswordState
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
   createdAt: DateTime
 }
 
@@ -29,7 +27,6 @@ input UserWhereInput {
   id: IDFilter
   name: StringFilter
   email: StringFilter
-  posts: PostManyRelationFilter
   createdAt: DateTimeNullableFilter
 }
 
@@ -78,12 +75,6 @@ input NestedStringFilter {
   not: NestedStringFilter
 }
 
-input PostManyRelationFilter {
-  every: PostWhereInput
-  some: PostWhereInput
-  none: PostWhereInput
-}
-
 input DateTimeNullableFilter {
   equals: DateTime
   in: [DateTime!]
@@ -111,15 +102,7 @@ input UserUpdateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForUpdateInput
   createdAt: DateTime
-}
-
-input PostRelateToManyForUpdateInput {
-  disconnect: [PostWhereUniqueInput!]
-  set: [PostWhereUniqueInput!]
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
 }
 
 input UserUpdateArgs {
@@ -131,173 +114,80 @@ input UserCreateInput {
   name: String
   email: String
   password: String
-  posts: PostRelateToManyForCreateInput
   createdAt: DateTime
 }
 
-input PostRelateToManyForCreateInput {
-  create: [PostCreateInput!]
-  connect: [PostWhereUniqueInput!]
-}
-
-type Post {
+type Introduction {
   id: ID!
   title: String
-  content: Post_content_Document
-  author: User
-  tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
-  tagsCount(where: TagWhereInput! = {}): Int
+  body: Introduction_body_Document
+  image: ImageFieldOutput
+  image_alt: String
 }
 
-type Post_content_Document {
+type Introduction_body_Document {
   document(hydrateRelationships: Boolean! = false): JSON!
 }
 
-input PostWhereUniqueInput {
+type ImageFieldOutput {
+  id: ID!
+  filesize: Int!
+  width: Int!
+  height: Int!
+  extension: ImageExtension!
+  url: String!
+}
+
+enum ImageExtension {
+  jpg
+  png
+  webp
+  gif
+}
+
+input IntroductionWhereUniqueInput {
   id: ID
 }
 
-input PostWhereInput {
-  AND: [PostWhereInput!]
-  OR: [PostWhereInput!]
-  NOT: [PostWhereInput!]
+input IntroductionWhereInput {
+  AND: [IntroductionWhereInput!]
+  OR: [IntroductionWhereInput!]
+  NOT: [IntroductionWhereInput!]
   id: IDFilter
   title: StringFilter
-  author: UserWhereInput
-  tags: TagManyRelationFilter
+  image_alt: StringFilter
 }
 
-input TagManyRelationFilter {
-  every: TagWhereInput
-  some: TagWhereInput
-  none: TagWhereInput
-}
-
-input PostOrderByInput {
+input IntroductionOrderByInput {
   id: OrderDirection
   title: OrderDirection
+  image_alt: OrderDirection
 }
 
-input PostUpdateInput {
+input IntroductionUpdateInput {
   title: String
-  content: JSON
-  author: UserRelateToOneForUpdateInput
-  tags: TagRelateToManyForUpdateInput
+  body: JSON
+  image: ImageFieldInput
+  image_alt: String
 }
 
-input UserRelateToOneForUpdateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-  disconnect: Boolean
+input ImageFieldInput {
+  upload: Upload!
 }
 
-input TagRelateToManyForUpdateInput {
-  disconnect: [TagWhereUniqueInput!]
-  set: [TagWhereUniqueInput!]
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
+"""The `Upload` scalar type represents a file upload."""
+scalar Upload
+
+input IntroductionUpdateArgs {
+  where: IntroductionWhereUniqueInput! = {id: 1}
+  data: IntroductionUpdateInput!
 }
 
-input PostUpdateArgs {
-  where: PostWhereUniqueInput!
-  data: PostUpdateInput!
-}
-
-input PostCreateInput {
+input IntroductionCreateInput {
   title: String
-  content: JSON
-  author: UserRelateToOneForCreateInput
-  tags: TagRelateToManyForCreateInput
-}
-
-input UserRelateToOneForCreateInput {
-  create: UserCreateInput
-  connect: UserWhereUniqueInput
-}
-
-input TagRelateToManyForCreateInput {
-  create: [TagCreateInput!]
-  connect: [TagWhereUniqueInput!]
-}
-
-type Tag {
-  id: ID!
-  name: String
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  postsCount(where: PostWhereInput! = {}): Int
-}
-
-input TagWhereUniqueInput {
-  id: ID
-}
-
-input TagWhereInput {
-  AND: [TagWhereInput!]
-  OR: [TagWhereInput!]
-  NOT: [TagWhereInput!]
-  id: IDFilter
-  name: StringFilter
-  posts: PostManyRelationFilter
-}
-
-input TagOrderByInput {
-  id: OrderDirection
-  name: OrderDirection
-}
-
-input TagUpdateInput {
-  name: String
-  posts: PostRelateToManyForUpdateInput
-}
-
-input TagUpdateArgs {
-  where: TagWhereUniqueInput!
-  data: TagUpdateInput!
-}
-
-input TagCreateInput {
-  name: String
-  posts: PostRelateToManyForCreateInput
-}
-
-type Thing {
-  id: ID!
-  title: String
-  content: String
-}
-
-input ThingWhereUniqueInput {
-  id: ID
-}
-
-input ThingWhereInput {
-  AND: [ThingWhereInput!]
-  OR: [ThingWhereInput!]
-  NOT: [ThingWhereInput!]
-  id: IDFilter
-  title: StringFilter
-  content: StringFilter
-}
-
-input ThingOrderByInput {
-  id: OrderDirection
-  title: OrderDirection
-  content: OrderDirection
-}
-
-input ThingUpdateInput {
-  title: String
-  content: String
-}
-
-input ThingUpdateArgs {
-  where: ThingWhereUniqueInput!
-  data: ThingUpdateInput!
-}
-
-input ThingCreateInput {
-  title: String
-  content: String
+  body: JSON
+  image: ImageFieldInput
+  image_alt: String
 }
 
 """
@@ -312,24 +202,12 @@ type Mutation {
   updateUsers(data: [UserUpdateArgs!]!): [User]
   deleteUser(where: UserWhereUniqueInput!): User
   deleteUsers(where: [UserWhereUniqueInput!]!): [User]
-  createPost(data: PostCreateInput!): Post
-  createPosts(data: [PostCreateInput!]!): [Post]
-  updatePost(where: PostWhereUniqueInput!, data: PostUpdateInput!): Post
-  updatePosts(data: [PostUpdateArgs!]!): [Post]
-  deletePost(where: PostWhereUniqueInput!): Post
-  deletePosts(where: [PostWhereUniqueInput!]!): [Post]
-  createTag(data: TagCreateInput!): Tag
-  createTags(data: [TagCreateInput!]!): [Tag]
-  updateTag(where: TagWhereUniqueInput!, data: TagUpdateInput!): Tag
-  updateTags(data: [TagUpdateArgs!]!): [Tag]
-  deleteTag(where: TagWhereUniqueInput!): Tag
-  deleteTags(where: [TagWhereUniqueInput!]!): [Tag]
-  createThing(data: ThingCreateInput!): Thing
-  createThings(data: [ThingCreateInput!]!): [Thing]
-  updateThing(where: ThingWhereUniqueInput!, data: ThingUpdateInput!): Thing
-  updateThings(data: [ThingUpdateArgs!]!): [Thing]
-  deleteThing(where: ThingWhereUniqueInput!): Thing
-  deleteThings(where: [ThingWhereUniqueInput!]!): [Thing]
+  createIntroduction(data: IntroductionCreateInput!): Introduction
+  createIntroductions(data: [IntroductionCreateInput!]!): [Introduction]
+  updateIntroduction(where: IntroductionWhereUniqueInput! = {id: 1}, data: IntroductionUpdateInput!): Introduction
+  updateIntroductions(data: [IntroductionUpdateArgs!]!): [Introduction]
+  deleteIntroduction(where: IntroductionWhereUniqueInput! = {id: 1}): Introduction
+  deleteIntroductions(where: [IntroductionWhereUniqueInput!]!): [Introduction]
   endSession: Boolean!
   authenticateUserWithPassword(email: String!, password: String!): UserAuthenticationWithPasswordResult
   createInitialUser(data: CreateInitialUserInput!): UserAuthenticationWithPasswordSuccess!
@@ -356,15 +234,9 @@ type Query {
   users(where: UserWhereInput! = {}, orderBy: [UserOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: UserWhereUniqueInput): [User!]
   user(where: UserWhereUniqueInput!): User
   usersCount(where: UserWhereInput! = {}): Int
-  posts(where: PostWhereInput! = {}, orderBy: [PostOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: PostWhereUniqueInput): [Post!]
-  post(where: PostWhereUniqueInput!): Post
-  postsCount(where: PostWhereInput! = {}): Int
-  tags(where: TagWhereInput! = {}, orderBy: [TagOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: TagWhereUniqueInput): [Tag!]
-  tag(where: TagWhereUniqueInput!): Tag
-  tagsCount(where: TagWhereInput! = {}): Int
-  things(where: ThingWhereInput! = {}, orderBy: [ThingOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: ThingWhereUniqueInput): [Thing!]
-  thing(where: ThingWhereUniqueInput!): Thing
-  thingsCount(where: ThingWhereInput! = {}): Int
+  introductions(where: IntroductionWhereInput! = {id: {equals: 1}}, orderBy: [IntroductionOrderByInput!]! = [], take: Int, skip: Int! = 0, cursor: IntroductionWhereUniqueInput): [Introduction!]
+  introduction(where: IntroductionWhereUniqueInput! = {id: 1}): Introduction
+  introductionsCount(where: IntroductionWhereInput! = {id: {equals: 1}}): Int
   keystone: KeystoneMeta!
   authenticatedItem: AuthenticatedItem
 }
